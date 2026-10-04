@@ -1,0 +1,6 @@
+{
+  "name": "QuickNotes - Web Foundations Day 1",
+  "description": "QuickNotes semantic HTML5 note-taking site and documentation built for Web Foundations Day 1.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

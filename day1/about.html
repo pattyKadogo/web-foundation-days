@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNotes - About</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      :root {
+        --bg-color: #f8fafc;
+        --surface-color: #ffffff;
+        --text-main: #0f172a;
+        --text-muted: #475569;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --border-color: #e2e8f0;
+        --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+        --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: var(--font-family);
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        background-color: var(--surface-color);
+        border-bottom: 1px solid var(--border-color);
+        padding: 2rem 1.5rem 1.5rem;
+        text-align: center;
+      }
+      header h1 {
+        font-size: 2.25rem;
+        color: #1e3a8a;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.25rem;
+      }
+      header .tagline {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        margin-bottom: 1.25rem;
+      }
+      nav {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+      }
+      nav a {
+        display: inline-block;
+        padding: 0.5rem 1.25rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        text-decoration: none;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        transition: all 0.15s ease-in-out;
+      }
+      nav a:hover,
+      nav a:focus {
+        color: var(--primary);
+        background-color: #eff6ff;
+        border-color: #bfdbfe;
+      }
+      main {
+        flex: 1;
+        max-width: 800px;
+        width: 100%;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+      }
+      h2 {
+        font-size: 1.75rem;
+        color: #1e293b;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.3rem;
+        color: #334155;
+        margin-bottom: 0.75rem;
+      }
+      section {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.75rem;
+        margin-bottom: 1.75rem;
+        box-shadow: var(--card-shadow);
+      }
+      p {
+        margin-bottom: 1rem;
+        color: var(--text-muted);
+      }
+      main > p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        color: #334155;
+      }
+      ol, ul {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-muted);
+      }
+      li {
+        margin-bottom: 0.5rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      th, td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+      th {
+        background-color: #f1f5f9;
+        font-weight: 600;
+        color: #1e293b;
+      }
+      tbody tr:hover {
+        background-color: #f8fafc;
+      }
+      kbd {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.85rem;
+        font-family: monospace;
+        background-color: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        box-shadow: 0 1px 0 #94a3b8;
+        color: #0f172a;
+      }
+      form p {
+        margin-bottom: 1.25rem;
+      }
+      label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.4rem;
+        color: #1e293b;
+      }
+      input[type="text"],
+      input[type="email"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        font-family: inherit;
+        font-size: 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background-color: #fff;
+        color: var(--text-main);
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      }
+      button[type="submit"] {
+        background-color: var(--primary);
+        color: #ffffff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out;
+      }
+      button[type="submit"]:hover {
+        background-color: var(--primary-hover);
+      }
+      .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .note-card {
+        background-color: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 1rem;
+      }
+      .note-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.4rem;
+        color: #1e3a8a;
+      }
+      .note-card p {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+      }
+      .note-meta small {
+        color: #64748b;
+        font-weight: 500;
+      }
+      footer {
+        background-color: var(--surface-color);
+        border-top: 1px solid var(--border-color);
+        padding: 1.5rem;
+        text-align: center;
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>QuickNotes</h1>
+      <p class="tagline">Your lightweight scratchpad for ideas, thoughts, and tasks.</p>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>About QuickNotes</h2>
+      <p>QuickNotes is a lightweight note-taking web application designed to help you capture ideas, jot down quick thoughts, and organize daily tasks without clutter. It provides a simple, accessible interface built with clean semantic HTML so you can stay productive and focused on what matters most.</p>
+
+      <section>
+        <h3>How to use QuickNotes</h3>
+        <ol>
+          <li>Enter your note title and select a relevant category from the options.</li>
+          <li>Type your thoughts, tasks, or study notes in the text area.</li>
+          <li>Click the "Save Note" button to store your entry for quick reference.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Features</h3>
+        <ul>
+          <li>Distraction-free, fast note authoring</li>
+          <li>Semantic HTML5 architecture for accessibility and screen readers</li>
+          <li>Keyboard shortcuts for swift navigation and workflows</li>
+          <li>Category tags for seamless topic organization</li>
+          <li>Responsive layout optimized for both desktop and mobile screens</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Keyboard shortcuts</h3>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Shortcut</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><kbd>Ctrl</kbd> + <kbd>N</kbd></td>
+              <td>Create a new note</td>
+            </tr>
+            <tr>
+              <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+              <td>Save current note</td>
+            </tr>
+            <tr>
+              <td><kbd>Ctrl</kbd> + <kbd>F</kbd></td>
+              <td>Search and filter notes</td>
+            </tr>
+            <tr>
+              <td><kbd>Esc</kbd></td>
+              <td>Cancel editing or dismiss form</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h3>Send feedback</h3>
+        <form action="#" method="post">
+          <p>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+          </p>
+          <p>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </p>
+          <p>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </p>
+          <p>
+            <button type="submit">Submit Feedback</button>
+          </p>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 QuickNotes. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
