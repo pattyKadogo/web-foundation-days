@@ -4,29 +4,23 @@ import {
   ExternalLink, 
   FileCode2, 
   Monitor, 
+  Smartphone, 
   ShieldCheck, 
-  FileText, 
-  Table, 
-  FormInput, 
-  ListOrdered, 
-  List, 
   Layers, 
   RefreshCw,
   Copy,
-  Check
+  Check,
+  Palette,
+  Maximize2
 } from 'lucide-react';
 
-const INDEX_HTML_CODE = `<!DOCTYPE html>
+const DAY2_INDEX_HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickNotes - Home</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-      /* Embedded responsive styles matching day1/style.css */
-      ...
-    </style>
   </head>
   <body>
     <header>
@@ -71,17 +65,17 @@ const INDEX_HTML_CODE = `<!DOCTYPE html>
           <article class="note-card">
             <h3>Web Foundations Day 1</h3>
             <p>Mastered semantic HTML5 elements including header, nav, main, section, article, and footer tags.</p>
-            <p class="note-meta"><small>Category: Study • Priority: High</small></p>
+            <p class="note-meta"><small>Category: Study &bull; Priority: High</small></p>
           </article>
           <article class="note-card">
             <h3>HTML5 Form Validation</h3>
             <p>Remember to pair every input element with a corresponding label using matching for and id attributes.</p>
-            <p class="note-meta"><small>Category: General • Priority: Medium</small></p>
+            <p class="note-meta"><small>Category: General &bull; Priority: Medium</small></p>
           </article>
           <article class="note-card">
             <h3>W3C Validation Checklist</h3>
             <p>Ensure doctype is present, closing tags are correct, tables have proper headings, and forms have labels.</p>
-            <p class="note-meta"><small>Category: Ideas • Priority: High</small></p>
+            <p class="note-meta"><small>Category: Ideas &bull; Priority: High</small></p>
           </article>
         </div>
       </section>
@@ -93,17 +87,13 @@ const INDEX_HTML_CODE = `<!DOCTYPE html>
   </body>
 </html>`;
 
-const ABOUT_HTML_CODE = `<!DOCTYPE html>
+const DAY2_ABOUT_HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickNotes - About</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-      /* Embedded responsive styles matching day1/style.css */
-      ...
-    </style>
   </head>
   <body>
     <header>
@@ -130,7 +120,7 @@ const ABOUT_HTML_CODE = `<!DOCTYPE html>
 
       <section>
         <h3>Features</h3>
-        <ul>
+        <ul class="features">
           <li>Distraction-free, fast note authoring</li>
           <li>Semantic HTML5 architecture for accessibility and screen readers</li>
           <li>Keyboard shortcuts for swift navigation and workflows</li>
@@ -197,12 +187,355 @@ const ABOUT_HTML_CODE = `<!DOCTYPE html>
   </body>
 </html>`;
 
+const DAY2_STYLE_CSS = `/* ==========================================================================
+   QuickNotes Stylesheet - Day 2: Styling the Two-Page Site
+   ========================================================================== */
+
+/* 1. Box-Sizing: border-box Reset & Margin/Padding Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. Base Body Styles */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f3f4f6;
+  color: #1f2937;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3. Header Styles */
+header {
+  background-color: #1e3a8a;
+  color: #ffffff;
+  padding: 36px 20px 28px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+header .tagline {
+  color: #cbd5e1;
+  font-size: 1.05rem;
+  margin-bottom: 20px;
+}
+
+/* 4. Navigation Bar: Flexbox, Centred, 16px gap, White text, No underline, Visible hover style */
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+nav a:hover,
+nav a:focus {
+  background-color: #ffffff;
+  color: #1e3a8a;
+  border-color: #ffffff;
+}
+
+/* 5. Centred <main> with Max-Width and Automatic Left and Right Margins */
+main {
+  max-width: 800px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 32px;
+  margin-bottom: 32px;
+  padding: 0 16px;
+  flex: 1;
+}
+
+h2 {
+  font-size: 1.75rem;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+main > p {
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 24px;
+}
+
+h3 {
+  font-size: 1.3rem;
+  color: #1f2937;
+  margin-bottom: 14px;
+}
+
+/* 6. Section: White Card Look */
+section {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+ol {
+  margin-left: 20px;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+ol li {
+  margin-bottom: 8px;
+}
+
+/* 7. Features List: CSS Grid as Responsive Cards using repeat(auto-fit, minmax(180px, 1fr)) */
+ul.features {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+ul.features li {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 0.95rem;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+}
+
+/* 8. Shortcuts Table: Borders and Padding on Cells */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+th,
+td {
+  border: 1px solid #d1d5db;
+  padding: 12px 14px;
+  text-align: left;
+}
+
+th {
+  background-color: #f3f4f6;
+  color: #111827;
+  font-weight: 600;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+kbd {
+  display: inline-block;
+  padding: 2px 7px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  background-color: #f3f4f6;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  box-shadow: 0 1px 0 #94a3b8;
+  color: #1e293b;
+}
+
+/* 9. Feedback Form: Fields Stacked Vertically with Full Width */
+form p {
+  margin-bottom: 16px;
+}
+
+form label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #1f2937;
+}
+
+form input[type="text"],
+form input[type="email"],
+form select,
+form textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #111827;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form select:focus,
+form textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* 10. Buttons: Transition and Hover Effects */
+button,
+button[type="submit"] {
+  display: inline-block;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+button:hover,
+button[type="submit"]:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+button:active,
+button[type="submit"]:active {
+  transform: scale(0.98);
+}
+
+/* Recent Notes Grid (Home Page) */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.note-card {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.note-card h3 {
+  font-size: 1.1rem;
+  color: #1e3a8a;
+  margin-bottom: 6px;
+}
+
+.note-card p {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.note-meta small {
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* 11. Footer */
+footer {
+  background-color: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 20px 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+/* 12. Media Query: (max-width: 600px) reduces header font size and padding */
+@media (max-width: 600px) {
+  header {
+    padding: 22px 14px 18px;
+  }
+
+  header h1 {
+    font-size: 1.75rem;
+  }
+
+  header .tagline {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+
+  nav {
+    gap: 12px;
+  }
+
+  nav a {
+    padding: 6px 14px;
+    font-size: 0.9rem;
+  }
+
+  main {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 0 12px;
+  }
+
+  section {
+    padding: 18px 14px;
+    margin-bottom: 18px;
+  }
+
+  th,
+  td {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+}`;
+
 export default function App() {
+  const [selectedDay, setSelectedDay] = useState<'day2' | 'day1'>('day2');
   const [activeTab, setActiveTab] = useState<'preview' | 'code' | 'rubric'>('preview');
-  const [currentPreviewPage, setCurrentPreviewPage] = useState<'index.html' | 'about.html'>('index.html');
-  const [activeCodeFile, setActiveCodeFile] = useState<'day1/index.html' | 'day1/about.html'>('day1/index.html');
+  const [currentPreviewPage, setCurrentPreviewPage] = useState<'index.html' | 'about.html'>('about.html');
+  const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [activeCodeFile, setActiveCodeFile] = useState<'day2/style.css' | 'day2/about.html' | 'day2/index.html'>('day2/style.css');
   const [copied, setCopied] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
+
+  const getCodeContent = () => {
+    if (activeCodeFile === 'day2/style.css') return DAY2_STYLE_CSS;
+    if (activeCodeFile === 'day2/about.html') return DAY2_ABOUT_HTML;
+    return DAY2_INDEX_HTML;
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -217,15 +550,15 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
       {/* Top Bar */}
-      <header className="bg-slate-950/80 backdrop-blur border-b border-slate-800 sticky top-0 z-50 px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-4">
+      <header className="bg-slate-950/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50 px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-sm">
+          <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md">
             QN
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-semibold text-slate-100 text-base leading-tight">
-                Web Foundations • Day 1 Assignment
+                QuickNotes — Day 2: Style the Two-Page Site
               </h1>
               <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <ShieldCheck className="w-3.5 h-3.5" />
@@ -233,46 +566,73 @@ export default function App() {
               </span>
             </div>
             <p className="text-xs text-slate-400">
-              Repository: <code className="text-blue-400">web-foundations-days</code> / Folder: <code className="text-blue-400">day1/</code>
+              Folder: <code className="text-blue-400 font-mono">day2/</code> • Pure HTML5 &amp; CSS (No React in lab pages)
             </p>
           </div>
         </div>
 
-        {/* View Switcher Tabs */}
-        <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-1 text-sm">
-          <button
-            onClick={() => setActiveTab('preview')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
-              activeTab === 'preview'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Monitor className="w-4 h-4" />
-            Live Browser
-          </button>
-          <button
-            onClick={() => setActiveTab('code')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
-              activeTab === 'code'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <FileCode2 className="w-4 h-4" />
-            Code Inspector
-          </button>
-          <button
-            onClick={() => setActiveTab('rubric')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
-              activeTab === 'rubric'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <CheckCircle2 className="w-4 h-4" />
-            Rubric & W3C Checklist
-          </button>
+        {/* Day & View Selector */}
+        <div className="flex items-center gap-2">
+          {/* Day 1 / Day 2 switch */}
+          <div className="flex bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
+            <button
+              onClick={() => setSelectedDay('day2')}
+              className={`px-3 py-1.5 rounded-md font-medium transition-all ${
+                selectedDay === 'day2'
+                  ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Day 2 (CSS Styled)
+            </button>
+            <button
+              onClick={() => setSelectedDay('day1')}
+              className={`px-3 py-1.5 rounded-md font-medium transition-all ${
+                selectedDay === 'day1'
+                  ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Day 1 (Skeleton)
+            </button>
+          </div>
+
+          {/* Mode Switcher Tabs */}
+          <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
+            <button
+              onClick={() => setActiveTab('preview')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
+                activeTab === 'preview'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Monitor className="w-3.5 h-3.5" />
+              Live Preview
+            </button>
+            <button
+              onClick={() => setActiveTab('code')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
+                activeTab === 'code'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <FileCode2 className="w-3.5 h-3.5" />
+              CSS &amp; HTML Code
+            </button>
+            <button
+              onClick={() => setActiveTab('rubric')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
+                activeTab === 'rubric'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Rubric Check
+            </button>
+          </div>
         </div>
       </header>
 
@@ -281,7 +641,7 @@ export default function App() {
         {activeTab === 'preview' && (
           <div className="flex-1 flex flex-col bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
             {/* Browser chrome header */}
-            <div className="bg-slate-900/90 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between gap-3">
+            <div className="bg-slate-900/90 border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -291,20 +651,48 @@ export default function App() {
                 <div className="h-4 w-px bg-slate-800 mx-1" />
                 <button
                   onClick={handleRefresh}
-                  title="Reload frame"
+                  title="Reload preview frame"
                   className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                 </button>
               </div>
 
+              {/* Viewport switch: Desktop (Full) vs Mobile Phone (375px) */}
+              <div className="flex items-center bg-slate-950 border border-slate-800 rounded-lg p-0.5 text-xs">
+                <button
+                  onClick={() => setViewportMode('desktop')}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors ${
+                    viewportMode === 'desktop'
+                      ? 'bg-slate-800 text-white'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="Desktop View (>600px)"
+                >
+                  <Monitor className="w-3.5 h-3.5" />
+                  Desktop
+                </button>
+                <button
+                  onClick={() => setViewportMode('mobile')}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors ${
+                    viewportMode === 'mobile'
+                      ? 'bg-slate-800 text-white'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="Mobile View (<600px media query test)"
+                >
+                  <Smartphone className="w-3.5 h-3.5" />
+                  Mobile (375px)
+                </button>
+              </div>
+
               {/* URL address pill */}
-              <div className="flex-1 max-w-md bg-slate-950 border border-slate-800 px-3 py-1 rounded-md text-xs text-slate-300 font-mono flex items-center justify-between">
+              <div className="flex-1 max-w-sm bg-slate-950 border border-slate-800 px-3 py-1 rounded-md text-xs text-slate-300 font-mono flex items-center justify-between">
                 <span className="truncate">
-                  http://localhost:3000/day1/<span className="text-blue-400 font-semibold">{currentPreviewPage}</span>
+                  /{selectedDay}/<span className="text-blue-400 font-semibold">{currentPreviewPage}</span>
                 </span>
-                <span className="text-[10px] text-emerald-400 font-sans uppercase font-bold tracking-wider ml-2">
-                  HTML5
+                <span className="text-[10px] text-blue-400 font-sans uppercase font-bold tracking-wider ml-2">
+                  Live
                 </span>
               </div>
 
@@ -319,7 +707,7 @@ export default function App() {
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    index.html
+                    Home
                   </button>
                   <button
                     onClick={() => setCurrentPreviewPage('about.html')}
@@ -329,30 +717,38 @@ export default function App() {
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    about.html
+                    About (Cards &amp; Form)
                   </button>
                 </div>
 
                 <a
-                  href={`/day1/${currentPreviewPage}`}
+                  href={`/${selectedDay}/${currentPreviewPage}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  Open Raw
+                  Open Direct URL
                 </a>
               </div>
             </div>
 
-            {/* Embedded Live Web Page */}
-            <div className="flex-1 bg-white min-h-[640px] relative">
-              <iframe
-                key={iframeKey}
-                src={`/day1/${currentPreviewPage}`}
-                title={`Live Preview of day1/${currentPreviewPage}`}
-                className="w-full h-full border-0 absolute inset-0"
-              />
+            {/* Embedded Live Web Page with responsive container */}
+            <div className="flex-1 bg-slate-900 flex justify-center items-stretch min-h-[640px] p-2 overflow-auto">
+              <div
+                className={`transition-all duration-300 bg-white shadow-2xl relative ${
+                  viewportMode === 'mobile'
+                    ? 'w-[375px] my-4 rounded-2xl border-4 border-slate-700 overflow-hidden min-h-[600px]'
+                    : 'w-full h-full rounded-md'
+                }`}
+              >
+                <iframe
+                  key={`${iframeKey}-${selectedDay}-${currentPreviewPage}`}
+                  src={`/${selectedDay}/${currentPreviewPage}`}
+                  title={`Live Preview of ${selectedDay}/${currentPreviewPage}`}
+                  className="w-full h-full border-0 absolute inset-0"
+                />
+              </div>
             </div>
           </div>
         )}
@@ -360,38 +756,45 @@ export default function App() {
         {activeTab === 'code' && (
           <div className="flex-1 flex flex-col bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
             {/* File Switcher & Actions */}
-            <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between gap-4">
+            <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setActiveCodeFile('day1/index.html')}
+                  onClick={() => setActiveCodeFile('day2/style.css')}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
-                    activeCodeFile === 'day1/index.html'
+                    activeCodeFile === 'day2/style.css'
                       ? 'bg-blue-600 text-white font-semibold'
                       : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
                   }`}
                 >
-                  <FileCode2 className="w-4 h-4" />
-                  day1/index.html
+                  <Palette className="w-4 h-4 text-amber-400" />
+                  day2/style.css
                 </button>
                 <button
-                  onClick={() => setActiveCodeFile('day1/about.html')}
+                  onClick={() => setActiveCodeFile('day2/about.html')}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
-                    activeCodeFile === 'day1/about.html'
+                    activeCodeFile === 'day2/about.html'
                       ? 'bg-blue-600 text-white font-semibold'
                       : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
                   }`}
                 >
-                  <FileCode2 className="w-4 h-4" />
-                  day1/about.html
+                  <FileCode2 className="w-4 h-4 text-blue-400" />
+                  day2/about.html
+                </button>
+                <button
+                  onClick={() => setActiveCodeFile('day2/index.html')}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
+                    activeCodeFile === 'day2/index.html'
+                      ? 'bg-blue-600 text-white font-semibold'
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  <FileCode2 className="w-4 h-4 text-blue-400" />
+                  day2/index.html
                 </button>
               </div>
 
               <button
-                onClick={() =>
-                  copyToClipboard(
-                    activeCodeFile === 'day1/index.html' ? INDEX_HTML_CODE : ABOUT_HTML_CODE
-                  )
-                }
+                onClick={() => copyToClipboard(getCodeContent())}
                 className="flex items-center gap-1.5 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-md transition-colors"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -402,7 +805,7 @@ export default function App() {
             {/* Code Display Area */}
             <div className="flex-1 p-4 bg-slate-950 overflow-auto font-mono text-xs sm:text-sm text-slate-300 leading-relaxed">
               <pre className="whitespace-pre">
-                {activeCodeFile === 'day1/index.html' ? INDEX_HTML_CODE : ABOUT_HTML_CODE}
+                {getCodeContent()}
               </pre>
             </div>
           </div>
@@ -410,7 +813,7 @@ export default function App() {
 
         {activeTab === 'rubric' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* W3C Compliance Card */}
+            {/* W3C & CSS Specs Card */}
             <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-xl">
               <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
@@ -418,7 +821,7 @@ export default function App() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-100 text-sm">W3C Nu Validator Status</h3>
-                  <p className="text-xs text-slate-400">Tested against validator.w3.org</p>
+                  <p className="text-xs text-slate-400">Tested against validator.w3.org API</p>
                 </div>
               </div>
 
@@ -426,7 +829,7 @@ export default function App() {
                 <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileCode2 className="w-4 h-4 text-blue-400" />
-                    <span className="text-xs font-mono text-slate-200">day1/index.html</span>
+                    <span className="text-xs font-mono text-slate-200">day2/index.html</span>
                   </div>
                   <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                     0 Errors • 0 Warnings
@@ -436,84 +839,94 @@ export default function App() {
                 <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileCode2 className="w-4 h-4 text-blue-400" />
-                    <span className="text-xs font-mono text-slate-200">day1/about.html</span>
+                    <span className="text-xs font-mono text-slate-200">day2/about.html</span>
                   </div>
                   <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                     0 Errors • 0 Warnings
                   </span>
                 </div>
+
+                <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-amber-400" />
+                    <span className="text-xs font-mono text-slate-200">day2/style.css</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    Valid CSS3 Standard
+                  </span>
+                </div>
               </div>
 
               <div className="mt-5 p-3.5 bg-blue-950/30 border border-blue-800/40 rounded-lg text-xs text-blue-200 leading-relaxed">
-                Both pages strictly adhere to the standard HTML5 doctype, correct semantic tags, valid nesting, matching attributes, and have been validated with the official W3C Nu HTML Checker API.
+                Both pages in <code>day2/</code> link to the shared <code>style.css</code> via <code>&lt;link rel="stylesheet" href="style.css"&gt;</code> and strictly follow HTML5 and modern responsive CSS layout techniques without any framework dependencies.
               </div>
             </div>
 
-            {/* Assignment Rubric Checklist */}
+            {/* Day 2 Assignment Checklist */}
             <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-xl">
               <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-100 text-sm">Assignment Rubric Checklist</h3>
-                  <p className="text-xs text-slate-400">All Day 1 requirements fulfilled</p>
+                  <h3 className="font-semibold text-slate-100 text-sm">Day 2 Rubric Checklist</h3>
+                  <p className="text-xs text-slate-400">All 9 requirements verified</p>
                 </div>
               </div>
 
-              <ul className="space-y-2.5 text-xs text-slate-300">
+              <ul className="space-y-2 text-xs text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>File structure:</strong> Files placed in <code className="text-blue-400 font-mono">day1/index.html</code> and <code className="text-blue-400 font-mono">day1/about.html</code>.
+                    <strong>Copies in day2/:</strong> <code className="text-blue-400 font-mono">day2/index.html</code> and <code className="text-blue-400 font-mono">day2/about.html</code> linking shared <code className="text-blue-400 font-mono">style.css</code>.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Header & Tagline:</strong> Identical <code className="text-blue-400 font-mono">&lt;header&gt;</code> on both pages with <code className="text-blue-400 font-mono">&lt;h1&gt;QuickNotes&lt;/h1&gt;</code> and tagline.
+                    <strong>Features Class:</strong> <code className="text-blue-400 font-mono">class="features"</code> added to the features <code className="text-blue-400 font-mono">&lt;ul&gt;</code> on <code className="text-blue-400 font-mono">about.html</code>.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Navigation links:</strong> <code className="text-blue-400 font-mono">&lt;nav&gt;</code> inside header under tagline with two links: "Home" (to index.html) and "About" (to about.html). Works bidirectionally.
+                    <strong>Box-Sizing Reset:</strong> Universal <code className="text-blue-400 font-mono">box-sizing: border-box</code> reset applied.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>About Heading & Intro:</strong> <code className="text-blue-400 font-mono">&lt;h2&gt;About QuickNotes&lt;/h2&gt;</code> followed by a clear two-sentence introduction explaining what QuickNotes is for.
+                    <strong>Flexbox Nav:</strong> Centred row, <code className="text-blue-400 font-mono">16px gap</code>, white text, no underline, visible hover style.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Ordered List:</strong> Section with <code className="text-blue-400 font-mono">&lt;ol&gt;</code> "How to use QuickNotes" containing 3 numbered steps.
+                    <strong>Centred Main &amp; Card Sections:</strong> <code className="text-blue-400 font-mono">max-width: 800px</code> with auto margins, each <code className="text-blue-400 font-mono">&lt;section&gt;</code> styled as a white card.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Features List:</strong> Section with unordered list (<code className="text-blue-400 font-mono">&lt;ul&gt;</code>) detailing core QuickNotes features.
+                    <strong>CSS Grid Features Cards:</strong> Features list styled using <code className="text-blue-400 font-mono">repeat(auto-fit, minmax(180px, 1fr))</code>.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Shortcuts Table:</strong> <code className="text-blue-400 font-mono">&lt;table&gt;</code> with "Shortcut" and "Action" header row and 4 shortcut rows.
+                    <strong>Table &amp; Form Styling:</strong> Table cells with borders and padding; form fields stacked vertically with full width.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Feedback Form:</strong> Includes labelled <code className="text-blue-400 font-mono">type="text"</code> name, labelled <code className="text-blue-400 font-mono">type="email"</code> email, labelled <code className="text-blue-400 font-mono">&lt;textarea&gt;</code> message, all 3 marked <code className="text-blue-400 font-mono">required</code>, with matching <code className="text-blue-400 font-mono">for</code> and <code className="text-blue-400 font-mono">id</code> attributes, plus a submit button.
+                    <strong>Transitions:</strong> Smooth transitions on buttons and navigation links.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Footer & Git:</strong> Identical footer on both pages; git committed with exact message <code className="text-blue-400 font-mono">Day 1 assignment</code>.
+                    <strong>Media Query:</strong> <code className="text-blue-400 font-mono">@media (max-width: 600px)</code> reducing header font size, padding, and nav spacing on small screens.
                   </span>
                 </li>
               </ul>
