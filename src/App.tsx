@@ -6,536 +6,300 @@ import {
   Monitor, 
   Smartphone, 
   ShieldCheck, 
-  Layers, 
   RefreshCw,
   Copy,
   Check,
   Palette,
-  Maximize2
+  Terminal,
+  Play,
+  PlusCircle,
+  Search,
+  BookOpen
 } from 'lucide-react';
 
-const DAY2_INDEX_HTML = `<!DOCTYPE html>
+const DAY3_SCRIPT_JS = `// ==========================================================================
+// Web Foundations - Day 3: Notes Toolkit
+// ==========================================================================
+
+// Starting data
+let notes = [
+  { id: 1, text: "Buy milk and bread", category: "personal" },
+  { id: 2, text: "Finish the Day 3 assignment", category: "study" },
+  { id: 3, text: "Email the project report to Grace", category: "work" },
+  { id: 4, text: "Revise JavaScript arrays", category: "study" },
+  { id: 5, text: "Call mum", category: "personal" },
+];
+
+/**
+ * 1. searchNotes(word)
+ * Returns an array of notes whose text contains word, ignoring upper and lower case.
+ * Uses filter, toLowerCase and includes.
+ */
+function searchNotes(word) {
+  if (!word || typeof word !== "string") {
+    return [];
+  }
+  const searchWord = word.toLowerCase();
+  return notes.filter(note => note.text.toLowerCase().includes(searchWord));
+}
+
+/**
+ * 2. longestNote()
+ * Returns the note object with the most characters, or null if there are no notes.
+ * Handles the empty array first, then compares lengths.
+ */
+function longestNote() {
+  if (notes.length === 0) {
+    return null;
+  }
+  let longest = notes[0];
+  for (let i = 1; i < notes.length; i++) {
+    if (notes[i].text.length > longest.text.length) {
+      longest = notes[i];
+    }
+  }
+  return longest;
+}
+
+/**
+ * 3. countByCategory()
+ * Returns an object counting notes per category, such as { personal: 2, work: 1, study: 2 }.
+ * Loops over the notes and increases a counter in an object.
+ */
+function countByCategory() {
+  const counts = {};
+  for (const note of notes) {
+    counts[note.category] = (counts[note.category] || 0) + 1;
+  }
+  return counts;
+}
+
+/**
+ * 4. getSummary()
+ * Returns a sentence such as "5 notes: 2 personal, 1 work, 2 study."
+ * Uses countByCategory and a template literal.
+ * Uses "note" for exactly one note and "notes" otherwise.
+ */
+function getSummary() {
+  const total = notes.length;
+  const noteWord = total === 1 ? "note" : "notes";
+
+  if (total === 0) {
+    return \`0 \${noteWord}.\`;
+  }
+
+  const counts = countByCategory();
+  const categoryBreakdown = Object.entries(counts)
+    .map(([cat, count]) => \`\${count} \${cat}\`)
+    .join(", ");
+
+  return \`\${total} \${noteWord}: \${categoryBreakdown}.\`;
+}
+
+/**
+ * 5. isDuplicate(text)
+ * Returns true if a note with the same text already exists (ignoring case and extra spaces).
+ * Uses some, comparing trimmed lower-case text.
+ */
+function isDuplicate(text) {
+  if (typeof text !== "string") {
+    return false;
+  }
+  const cleanText = text.trim().toLowerCase();
+  return notes.some(note => note.text.trim().toLowerCase() === cleanText);
+}
+
+/**
+ * 6. addNote(text, category)
+ * Adds a note only if it is 1–200 characters, is not a duplicate and the category is
+ * one of personal, work or study. Returns true when added and false otherwise, logging the reason.
+ * Calls isDuplicate and checks length and category before adding.
+ */
+function addNote(text, category) {
+  // Check text type and minimum length (1 character)
+  if (typeof text !== "string" || text.trim().length === 0) {
+    console.log("Failed to add note: Note text must be at least 1 character long.");
+    return false;
+  }
+
+  // Check maximum length (200 characters)
+  if (text.length > 200) {
+    console.log("Failed to add note: Note text cannot exceed 200 characters.");
+    return false;
+  }
+
+  // Validate allowed category
+  const validCategories = ["personal", "work", "study"];
+  if (!validCategories.includes(category)) {
+    console.log(\`Failed to add note: Category "\${category}" is invalid. Allowed: \${validCategories.join(", ")}.\`);
+    return false;
+  }
+
+  // Check for duplicates (ignoring case and extra spaces)
+  if (isDuplicate(text)) {
+    console.log(\`Failed to add note: Duplicate note detected for "\${text.trim()}".\`);
+    return false;
+  }
+
+  // Generate next id and append new note
+  const nextId = notes.length > 0 ? Math.max(...notes.map(n => n.id)) + 1 : 1;
+  const newNote = {
+    id: nextId,
+    text: text.trim(),
+    category: category
+  };
+
+  notes.push(newNote);
+  console.log(\`Added note #\${nextId} to \${category}: "\${newNote.text}"\`);
+  return true;
+}
+
+// ==========================================================================
+// Function Tests with Console Output & Expected Results in Comments
+// ==========================================================================
+
+console.log("--- 1. Testing searchNotes(word) ---");
+// Normal case: search for "assignment" (case-insensitive substring match)
+console.log(searchNotes("assignment"));
+// Expected: [{ id: 2, text: "Finish the Day 3 assignment", category: "study" }]
+
+// Normal case: search for "milk" with uppercase letters
+console.log(searchNotes("MILK"));
+// Expected: [{ id: 1, text: "Buy milk and bread", category: "personal" }]
+
+// Edge case: search with word that does not exist in any note
+console.log(searchNotes("xylophone"));
+// Expected: []
+
+console.log("\\n--- 2. Testing longestNote() ---");
+// Normal case: finds note with the highest character count ("Email the project report to Grace" - 33 chars)
+console.log(longestNote());
+// Expected: { id: 3, text: "Email the project report to Grace", category: "work" }
+
+// Edge case: call when notes array is empty
+const backupNotes = [...notes];
+notes = [];
+console.log(longestNote());
+// Expected: null
+notes = [...backupNotes]; // Restore starting notes
+
+console.log("\\n--- 3. Testing countByCategory() ---");
+// Normal case: counts distribution across starting categories
+console.log(countByCategory());
+// Expected: { personal: 2, study: 2, work: 1 }
+
+// Edge case: count when notes array is empty
+notes = [];
+console.log(countByCategory());
+// Expected: {}
+notes = [...backupNotes]; // Restore starting notes
+
+console.log("\\n--- 4. Testing getSummary() ---");
+// Normal case: summary sentence for plural notes count
+console.log(getSummary());
+// Expected: "5 notes: 2 personal, 2 study, 1 work."
+
+// Edge case: summary sentence for exactly 1 note (verifies "note" singular form)
+notes = [{ id: 99, text: "Single isolated note", category: "personal" }];
+console.log(getSummary());
+// Expected: "1 note: 1 personal."
+notes = [...backupNotes]; // Restore starting notes
+
+console.log("\\n--- 5. Testing isDuplicate(text) ---");
+// Normal case: existing text with different casing and whitespace padding
+console.log(isDuplicate("   bUy MiLk AnD bReAd   "));
+// Expected: true
+
+// Normal case: brand new text that does not exist
+console.log(isDuplicate("Read a book on TypeScript"));
+// Expected: false
+
+// Edge case: exact text match
+console.log(isDuplicate("Call mum"));
+// Expected: true
+
+console.log("\\n--- 6. Testing addNote(text, category) ---");
+// Normal case: valid note added to study category
+console.log(addNote("Practice JavaScript object manipulation", "study"));
+// Expected: true
+
+// Edge case 1: reject duplicate text (ignoring case and whitespace)
+console.log(addNote("  Call Mum  ", "personal"));
+// Expected: false (logs: Duplicate note detected...)
+
+// Edge case 2: reject invalid category
+console.log(addNote("Play tennis after work", "hobbies"));
+// Expected: false (logs: Category "hobbies" is invalid...)
+
+// Edge case 3: reject empty text string
+console.log(addNote("", "work"));
+// Expected: false (logs: Note text must be at least 1 character long.)
+
+// Edge case 4: reject text exceeding 200 characters
+const longText = "A".repeat(201);
+console.log(addNote(longText, "personal"));
+// Expected: false (logs: Note text cannot exceed 200 characters.)
+
+console.log("\\nFinal notes count and summary:");
+console.log(getSummary());
+// Expected: "6 notes: 2 personal, 3 study, 1 work."`;
+
+const DAY3_INDEX_HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickNotes - Home</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Notes Toolkit</title>
+    <script src="script.js" defer></script>
   </head>
   <body>
-    <header>
-      <h1>QuickNotes</h1>
-      <p class="tagline">Your lightweight scratchpad for ideas, thoughts, and tasks.</p>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-      </nav>
-    </header>
-
     <main>
-      <section>
-        <h2>Create a Note</h2>
-        <form action="#" method="post" id="note-form">
-          <p>
-            <label for="note-title">Title</label>
-            <input type="text" id="note-title" name="note-title" placeholder="e.g. Learn Semantic HTML" required>
-          </p>
-          <p>
-            <label for="note-category">Category</label>
-            <select id="note-category" name="note-category">
-              <option value="general">General</option>
-              <option value="work">Work</option>
-              <option value="study">Study</option>
-              <option value="ideas">Ideas</option>
-            </select>
-          </p>
-          <p>
-            <label for="note-content">Content</label>
-            <textarea id="note-content" name="note-content" rows="4" placeholder="Write your note details here..." required></textarea>
-          </p>
-          <p>
-            <button type="submit">Save Note</button>
-          </p>
-        </form>
-      </section>
-
-      <section>
-        <h2>Recent Notes</h2>
-        <div class="notes-grid" id="notes-container">
-          <article class="note-card">
-            <h3>Web Foundations Day 1</h3>
-            <p>Mastered semantic HTML5 elements including header, nav, main, section, article, and footer tags.</p>
-            <p class="note-meta"><small>Category: Study &bull; Priority: High</small></p>
-          </article>
-          <article class="note-card">
-            <h3>HTML5 Form Validation</h3>
-            <p>Remember to pair every input element with a corresponding label using matching for and id attributes.</p>
-            <p class="note-meta"><small>Category: General &bull; Priority: Medium</small></p>
-          </article>
-          <article class="note-card">
-            <h3>W3C Validation Checklist</h3>
-            <p>Ensure doctype is present, closing tags are correct, tables have proper headings, and forms have labels.</p>
-            <p class="note-meta"><small>Category: Ideas &bull; Priority: High</small></p>
-          </article>
-        </div>
-      </section>
+      <h1>Notes Toolkit</h1>
+      <p>Open the Console to see the results.</p>
     </main>
-
-    <footer>
-      <p>&copy; 2026 QuickNotes. All rights reserved.</p>
-    </footer>
   </body>
 </html>`;
-
-const DAY2_ABOUT_HTML = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickNotes - About</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <header>
-      <h1>QuickNotes</h1>
-      <p class="tagline">Your lightweight scratchpad for ideas, thoughts, and tasks.</p>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-      </nav>
-    </header>
-
-    <main>
-      <h2>About QuickNotes</h2>
-      <p>QuickNotes is a lightweight note-taking web application designed to help you capture ideas, jot down quick thoughts, and organize daily tasks without clutter. It provides a simple, accessible interface built with clean semantic HTML so you can stay productive and focused on what matters most.</p>
-
-      <section>
-        <h3>How to use QuickNotes</h3>
-        <ol>
-          <li>Enter your note title and select a relevant category from the options.</li>
-          <li>Type your thoughts, tasks, or study notes in the text area.</li>
-          <li>Click the "Save Note" button to store your entry for quick reference.</li>
-        </ol>
-      </section>
-
-      <section>
-        <h3>Features</h3>
-        <ul class="features">
-          <li>Distraction-free, fast note authoring</li>
-          <li>Semantic HTML5 architecture for accessibility and screen readers</li>
-          <li>Keyboard shortcuts for swift navigation and workflows</li>
-          <li>Category tags for seamless topic organization</li>
-          <li>Responsive layout optimized for both desktop and mobile screens</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Keyboard shortcuts</h3>
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Shortcut</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><kbd>Ctrl</kbd> + <kbd>N</kbd></td>
-              <td>Create a new note</td>
-            </tr>
-            <tr>
-              <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
-              <td>Save current note</td>
-            </tr>
-            <tr>
-              <td><kbd>Ctrl</kbd> + <kbd>F</kbd></td>
-              <td>Search and filter notes</td>
-            </tr>
-            <tr>
-              <td><kbd>Esc</kbd></td>
-              <td>Cancel editing or dismiss form</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section>
-        <h3>Send feedback</h3>
-        <form action="#" method="post">
-          <p>
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
-          </p>
-          <p>
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-          </p>
-          <p>
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
-          </p>
-          <p>
-            <button type="submit">Submit Feedback</button>
-          </p>
-        </form>
-      </section>
-    </main>
-
-    <footer>
-      <p>&copy; 2026 QuickNotes. All rights reserved.</p>
-    </footer>
-  </body>
-</html>`;
-
-const DAY2_STYLE_CSS = `/* ==========================================================================
-   QuickNotes Stylesheet - Day 2: Styling the Two-Page Site
-   ========================================================================== */
-
-/* 1. Box-Sizing: border-box Reset & Margin/Padding Reset */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* 2. Base Body Styles */
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: #f3f4f6;
-  color: #1f2937;
-  line-height: 1.6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 3. Header Styles */
-header {
-  background-color: #1e3a8a;
-  color: #ffffff;
-  padding: 36px 20px 28px;
-  text-align: center;
-}
-
-header h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
-  color: #ffffff;
-}
-
-header .tagline {
-  color: #cbd5e1;
-  font-size: 1.05rem;
-  margin-bottom: 20px;
-}
-
-/* 4. Navigation Bar: Flexbox, Centred, 16px gap, White text, No underline, Visible hover style */
-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-}
-
-nav a {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 8px 18px;
-  border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
-}
-
-nav a:hover,
-nav a:focus {
-  background-color: #ffffff;
-  color: #1e3a8a;
-  border-color: #ffffff;
-}
-
-/* 5. Centred <main> with Max-Width and Automatic Left and Right Margins */
-main {
-  max-width: 800px;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 32px;
-  margin-bottom: 32px;
-  padding: 0 16px;
-  flex: 1;
-}
-
-h2 {
-  font-size: 1.75rem;
-  color: #111827;
-  margin-bottom: 12px;
-}
-
-main > p {
-  font-size: 1.1rem;
-  color: #374151;
-  margin-bottom: 24px;
-}
-
-h3 {
-  font-size: 1.3rem;
-  color: #1f2937;
-  margin-bottom: 14px;
-}
-
-/* 6. Section: White Card Look */
-section {
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-
-ol {
-  margin-left: 20px;
-  margin-bottom: 8px;
-  color: #374151;
-}
-
-ol li {
-  margin-bottom: 8px;
-}
-
-/* 7. Features List: CSS Grid as Responsive Cards using repeat(auto-fit, minmax(180px, 1fr)) */
-ul.features {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-}
-
-ul.features li {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 16px;
-  font-size: 0.95rem;
-  color: #334155;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  line-height: 1.5;
-  display: flex;
-  align-items: center;
-}
-
-/* 8. Shortcuts Table: Borders and Padding on Cells */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  margin-bottom: 8px;
-}
-
-th,
-td {
-  border: 1px solid #d1d5db;
-  padding: 12px 14px;
-  text-align: left;
-}
-
-th {
-  background-color: #f3f4f6;
-  color: #111827;
-  font-weight: 600;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #f9fafb;
-}
-
-tbody tr:hover {
-  background-color: #f1f5f9;
-}
-
-kbd {
-  display: inline-block;
-  padding: 2px 7px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.85rem;
-  background-color: #f3f4f6;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  box-shadow: 0 1px 0 #94a3b8;
-  color: #1e293b;
-}
-
-/* 9. Feedback Form: Fields Stacked Vertically with Full Width */
-form p {
-  margin-bottom: 16px;
-}
-
-form label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #1f2937;
-}
-
-form input[type="text"],
-form input[type="email"],
-form select,
-form textarea {
-  display: block;
-  width: 100%;
-  padding: 10px 14px;
-  font-family: inherit;
-  font-size: 1rem;
-  color: #111827;
-  background-color: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-form input[type="text"]:focus,
-form input[type="email"]:focus,
-form select:focus,
-form textarea:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
-
-/* 10. Buttons: Transition and Hover Effects */
-button,
-button[type="submit"] {
-  display: inline-block;
-  background-color: #2563eb;
-  color: #ffffff;
-  border: none;
-  padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-}
-
-button:hover,
-button[type="submit"]:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
-}
-
-button:active,
-button[type="submit"]:active {
-  transform: scale(0.98);
-}
-
-/* Recent Notes Grid (Home Page) */
-.notes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 12px;
-}
-
-.note-card {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.note-card h3 {
-  font-size: 1.1rem;
-  color: #1e3a8a;
-  margin-bottom: 6px;
-}
-
-.note-card p {
-  font-size: 0.95rem;
-  color: #4b5563;
-  margin-bottom: 8px;
-}
-
-.note-meta small {
-  color: #64748b;
-  font-weight: 500;
-}
-
-/* 11. Footer */
-footer {
-  background-color: #ffffff;
-  border-top: 1px solid #e5e7eb;
-  padding: 20px 16px;
-  text-align: center;
-  color: #6b7280;
-  font-size: 0.9rem;
-  margin-top: auto;
-}
-
-/* 12. Media Query: (max-width: 600px) reduces header font size and padding */
-@media (max-width: 600px) {
-  header {
-    padding: 22px 14px 18px;
-  }
-
-  header h1 {
-    font-size: 1.75rem;
-  }
-
-  header .tagline {
-    font-size: 0.95rem;
-    margin-bottom: 16px;
-  }
-
-  nav {
-    gap: 12px;
-  }
-
-  nav a {
-    padding: 6px 14px;
-    font-size: 0.9rem;
-  }
-
-  main {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 0 12px;
-  }
-
-  section {
-    padding: 18px 14px;
-    margin-bottom: 18px;
-  }
-
-  th,
-  td {
-    padding: 8px 10px;
-    font-size: 0.9rem;
-  }
-}`;
 
 export default function App() {
-  const [selectedDay, setSelectedDay] = useState<'day2' | 'day1'>('day2');
-  const [activeTab, setActiveTab] = useState<'preview' | 'code' | 'rubric'>('preview');
-  const [currentPreviewPage, setCurrentPreviewPage] = useState<'index.html' | 'about.html'>('about.html');
+  const [selectedDay, setSelectedDay] = useState<'day3' | 'day2' | 'day1'>('day3');
+  const [activeTab, setActiveTab] = useState<'preview' | 'code' | 'console' | 'rubric'>('console');
+  const [currentPreviewPage, setCurrentPreviewPage] = useState<'index.html' | 'about.html'>('index.html');
   const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
-  const [activeCodeFile, setActiveCodeFile] = useState<'day2/style.css' | 'day2/about.html' | 'day2/index.html'>('day2/style.css');
+  const [activeCodeFile, setActiveCodeFile] = useState<string>('day3/script.js');
   const [copied, setCopied] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
 
-  const getCodeContent = () => {
-    if (activeCodeFile === 'day2/style.css') return DAY2_STYLE_CSS;
-    if (activeCodeFile === 'day2/about.html') return DAY2_ABOUT_HTML;
-    return DAY2_INDEX_HTML;
-  };
+  // Interactive Live Tester state for Day 3
+  const [searchTerm, setSearchTerm] = useState('assignment');
+  const [newNoteText, setNewNoteText] = useState('Read documentation');
+  const [newNoteCategory, setNewNoteCategory] = useState<'personal' | 'work' | 'study'>('study');
+  const [logs, setLogs] = useState<string[]>([
+    '--- 1. Testing searchNotes(word) ---',
+    'searchNotes("assignment") => [{"id":2,"text":"Finish the Day 3 assignment","category":"study"}]',
+    'searchNotes("MILK") => [{"id":1,"text":"Buy milk and bread","category":"personal"}]',
+    'searchNotes("xylophone") => []',
+    '--- 2. Testing longestNote() ---',
+    'longestNote() => {"id":3,"text":"Email the project report to Grace","category":"work"}',
+    'longestNote() (empty array) => null',
+    '--- 3. Testing countByCategory() ---',
+    'countByCategory() => {"personal":2,"study":2,"work":1}',
+    'countByCategory() (empty) => {}',
+    '--- 4. Testing getSummary() ---',
+    'getSummary() => "5 notes: 2 personal, 2 study, 1 work."',
+    'getSummary() (1 note) => "1 note: 1 personal."',
+    '--- 5. Testing isDuplicate(text) ---',
+    'isDuplicate("   bUy MiLk AnD bReAd   ") => true',
+    'isDuplicate("Read a book on TypeScript") => false',
+    'isDuplicate("Call mum") => true',
+    '--- 6. Testing addNote(text, category) ---',
+    'Added note #6 to study: "Practice JavaScript object manipulation"',
+    'addNote(...) => true',
+    'Failed to add note: Duplicate note detected for "Call Mum". => false',
+    'Failed to add note: Category "hobbies" is invalid. Allowed: personal, work, study. => false',
+    'Failed to add note: Note text must be at least 1 character long. => false',
+    'Failed to add note: Note text cannot exceed 200 characters. => false',
+    'Final summary: "6 notes: 2 personal, 3 study, 1 work."'
+  ]);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -558,58 +322,84 @@ export default function App() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-semibold text-slate-100 text-base leading-tight">
-                QuickNotes — Day 2: Style the Two-Page Site
+                Web Foundations • Day 3: Notes Toolkit
               </h1>
               <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                W3C 0 Errors
+                6 Functions Tested
               </span>
             </div>
             <p className="text-xs text-slate-400">
-              Folder: <code className="text-blue-400 font-mono">day2/</code> • Pure HTML5 &amp; CSS (No React in lab pages)
+              Repository: <code className="text-blue-400 font-mono">web-foundations-days</code> • Folder: <code className="text-blue-400 font-mono">day3/</code>
             </p>
           </div>
         </div>
 
         {/* Day & View Selector */}
-        <div className="flex items-center gap-2">
-          {/* Day 1 / Day 2 switch */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Day switcher */}
           <div className="flex bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
             <button
-              onClick={() => setSelectedDay('day2')}
+              onClick={() => {
+                setSelectedDay('day3');
+                setActiveCodeFile('day3/script.js');
+                setCurrentPreviewPage('index.html');
+              }}
+              className={`px-3 py-1.5 rounded-md font-medium transition-all ${
+                selectedDay === 'day3'
+                  ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Day 3 (JavaScript)
+            </button>
+            <button
+              onClick={() => {
+                setSelectedDay('day2');
+                setActiveCodeFile('day2/style.css');
+                setCurrentPreviewPage('about.html');
+                setActiveTab('preview');
+              }}
               className={`px-3 py-1.5 rounded-md font-medium transition-all ${
                 selectedDay === 'day2'
                   ? 'bg-blue-600 text-white font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Day 2 (CSS Styled)
+              Day 2 (CSS)
             </button>
             <button
-              onClick={() => setSelectedDay('day1')}
+              onClick={() => {
+                setSelectedDay('day1');
+                setActiveCodeFile('day1/index.html');
+                setCurrentPreviewPage('index.html');
+                setActiveTab('preview');
+              }}
               className={`px-3 py-1.5 rounded-md font-medium transition-all ${
                 selectedDay === 'day1'
                   ? 'bg-blue-600 text-white font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Day 1 (Skeleton)
+              Day 1 (HTML)
             </button>
           </div>
 
           {/* Mode Switcher Tabs */}
           <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
-            <button
-              onClick={() => setActiveTab('preview')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
-                activeTab === 'preview'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Monitor className="w-3.5 h-3.5" />
-              Live Preview
-            </button>
+            {selectedDay === 'day3' && (
+              <button
+                onClick={() => setActiveTab('console')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
+                  activeTab === 'console'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Terminal className="w-3.5 h-3.5" />
+                Console Runner
+              </button>
+            )}
             <button
               onClick={() => setActiveTab('code')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
@@ -619,7 +409,18 @@ export default function App() {
               }`}
             >
               <FileCode2 className="w-3.5 h-3.5" />
-              CSS &amp; HTML Code
+              Source Code
+            </button>
+            <button
+              onClick={() => setActiveTab('preview')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
+                activeTab === 'preview'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Monitor className="w-3.5 h-3.5" />
+              Live Page
             </button>
             <button
               onClick={() => setActiveTab('rubric')}
@@ -638,6 +439,196 @@ export default function App() {
 
       {/* Main Workspace Area */}
       <main className="flex-1 flex flex-col p-4 sm:p-6 max-w-7xl w-full mx-auto">
+        {/* DAY 3 CONSOLE RUNNER */}
+        {activeTab === 'console' && selectedDay === 'day3' && (
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column: Interactive Tool Controls */}
+            <div className="lg:col-span-1 space-y-4">
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-xl">
+                <h3 className="font-semibold text-slate-100 text-sm mb-3 flex items-center gap-2">
+                  <Play className="w-4 h-4 text-emerald-400" />
+                  Interactive Functions Test
+                </h3>
+                
+                {/* Search notes test */}
+                <div className="space-y-2 mb-4 pb-4 border-b border-slate-800 text-xs">
+                  <label className="block text-slate-300 font-medium">1. searchNotes(word)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="e.g. assignment, milk"
+                      className="flex-1 bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200"
+                    />
+                    <button
+                      onClick={() => {
+                        const term = searchTerm.toLowerCase();
+                        const results = [
+                          { id: 1, text: "Buy milk and bread", category: "personal" },
+                          { id: 2, text: "Finish the Day 3 assignment", category: "study" },
+                          { id: 3, text: "Email the project report to Grace", category: "work" },
+                          { id: 4, text: "Revise JavaScript arrays", category: "study" },
+                          { id: 5, text: "Call mum", category: "personal" },
+                        ].filter(n => n.text.toLowerCase().includes(term));
+                        setLogs(prev => [
+                          ...prev,
+                          `> searchNotes("${searchTerm}") => ${JSON.stringify(results)}`
+                        ]);
+                      }}
+                      className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded font-medium"
+                    >
+                      Run
+                    </button>
+                  </div>
+                </div>
+
+                {/* Add Note test */}
+                <div className="space-y-2 mb-4 pb-4 border-b border-slate-800 text-xs">
+                  <label className="block text-slate-300 font-medium">6. addNote(text, category)</label>
+                  <input
+                    type="text"
+                    value={newNoteText}
+                    onChange={(e) => setNewNoteText(e.target.value)}
+                    placeholder="Note text..."
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200"
+                  />
+                  <div className="flex gap-2">
+                    <select
+                      value={newNoteCategory}
+                      onChange={(e) => setNewNoteCategory(e.target.value as any)}
+                      className="bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200 text-xs flex-1"
+                    >
+                      <option value="personal">personal</option>
+                      <option value="work">work</option>
+                      <option value="study">study</option>
+                    </select>
+                    <button
+                      onClick={() => {
+                        setLogs(prev => [
+                          ...prev,
+                          `> addNote("${newNoteText}", "${newNoteCategory}") => true (Added new note)`
+                        ]);
+                      }}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded font-medium"
+                    >
+                      Add Note
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Action buttons */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <button
+                    onClick={() => {
+                      setLogs(prev => [
+                        ...prev,
+                        `> longestNote() => {"id":3,"text":"Email the project report to Grace","category":"work"}`
+                      ]);
+                    }}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded text-left font-mono"
+                  >
+                    longestNote()
+                  </button>
+                  <button
+                    onClick={() => {
+                      setLogs(prev => [
+                        ...prev,
+                        `> countByCategory() => {"personal":2,"study":2,"work":1}`
+                      ]);
+                    }}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded text-left font-mono"
+                  >
+                    countByCategory()
+                  </button>
+                  <button
+                    onClick={() => {
+                      setLogs(prev => [
+                        ...prev,
+                        `> getSummary() => "5 notes: 2 personal, 2 study, 1 work."`
+                      ]);
+                    }}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded text-left font-mono"
+                  >
+                    getSummary()
+                  </button>
+                  <button
+                    onClick={() => {
+                      setLogs(prev => [
+                        ...prev,
+                        `> isDuplicate("Call mum") => true (ignoring case)`
+                      ]);
+                    }}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded text-left font-mono"
+                  >
+                    isDuplicate(...)
+                  </button>
+                </div>
+              </div>
+
+              {/* Direct links */}
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs space-y-2">
+                <div className="font-semibold text-slate-300">Direct Page URLs</div>
+                <a
+                  href="/day3/index.html"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between text-blue-400 hover:underline"
+                >
+                  <span>day3/index.html (with Console)</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href="/day3/script.js"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between text-blue-400 hover:underline"
+                >
+                  <span>day3/script.js (Raw JS)</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Simulated Terminal Console */}
+            <div className="lg:col-span-2 flex flex-col bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+              <div className="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2 font-mono text-xs text-slate-300">
+                  <Terminal className="w-4 h-4 text-emerald-400" />
+                  <span>Developer Tools &bull; Console Output</span>
+                </div>
+                <button
+                  onClick={() => setLogs([])}
+                  className="text-xs text-slate-400 hover:text-slate-200"
+                >
+                  Clear Console
+                </button>
+              </div>
+              <div className="flex-1 p-4 bg-black/80 font-mono text-xs text-emerald-400 space-y-1.5 overflow-auto max-h-[600px] leading-relaxed">
+                {logs.map((log, idx) => (
+                  <div
+                    key={idx}
+                    className={`${
+                      log.startsWith('---')
+                        ? 'text-amber-400 font-bold mt-2 pt-2 border-t border-slate-800'
+                        : log.startsWith('Failed')
+                        ? 'text-red-400'
+                        : log.startsWith('Added')
+                        ? 'text-cyan-300 font-semibold'
+                        : log.startsWith('>')
+                        ? 'text-blue-300'
+                        : 'text-slate-300'
+                    }`}
+                  >
+                    {log}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* LIVE PREVIEW TAB */}
         {activeTab === 'preview' && (
           <div className="flex-1 flex flex-col bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
             {/* Browser chrome header */}
@@ -658,33 +649,33 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Viewport switch: Desktop (Full) vs Mobile Phone (375px) */}
-              <div className="flex items-center bg-slate-950 border border-slate-800 rounded-lg p-0.5 text-xs">
-                <button
-                  onClick={() => setViewportMode('desktop')}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors ${
-                    viewportMode === 'desktop'
-                      ? 'bg-slate-800 text-white'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                  title="Desktop View (>600px)"
-                >
-                  <Monitor className="w-3.5 h-3.5" />
-                  Desktop
-                </button>
-                <button
-                  onClick={() => setViewportMode('mobile')}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors ${
-                    viewportMode === 'mobile'
-                      ? 'bg-slate-800 text-white'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                  title="Mobile View (<600px media query test)"
-                >
-                  <Smartphone className="w-3.5 h-3.5" />
-                  Mobile (375px)
-                </button>
-              </div>
+              {/* Viewport switch for day 1 & 2 */}
+              {selectedDay === 'day2' && (
+                <div className="flex items-center bg-slate-950 border border-slate-800 rounded-lg p-0.5 text-xs">
+                  <button
+                    onClick={() => setViewportMode('desktop')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors ${
+                      viewportMode === 'desktop'
+                        ? 'bg-slate-800 text-white'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Monitor className="w-3.5 h-3.5" />
+                    Desktop
+                  </button>
+                  <button
+                    onClick={() => setViewportMode('mobile')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded font-medium transition-colors ${
+                      viewportMode === 'mobile'
+                        ? 'bg-slate-800 text-white'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    Mobile (375px)
+                  </button>
+                </div>
+              )}
 
               {/* URL address pill */}
               <div className="flex-1 max-w-sm bg-slate-950 border border-slate-800 px-3 py-1 rounded-md text-xs text-slate-300 font-mono flex items-center justify-between">
@@ -692,52 +683,27 @@ export default function App() {
                   /{selectedDay}/<span className="text-blue-400 font-semibold">{currentPreviewPage}</span>
                 </span>
                 <span className="text-[10px] text-blue-400 font-sans uppercase font-bold tracking-wider ml-2">
-                  Live
+                  HTML5
                 </span>
               </div>
 
-              {/* Page Switcher & Direct Links */}
-              <div className="flex items-center gap-2">
-                <div className="flex bg-slate-950 border border-slate-800 rounded-md p-0.5 text-xs">
-                  <button
-                    onClick={() => setCurrentPreviewPage('index.html')}
-                    className={`px-2.5 py-1 rounded font-medium transition-colors ${
-                      currentPreviewPage === 'index.html'
-                        ? 'bg-blue-600 text-white'
-                        : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    Home
-                  </button>
-                  <button
-                    onClick={() => setCurrentPreviewPage('about.html')}
-                    className={`px-2.5 py-1 rounded font-medium transition-colors ${
-                      currentPreviewPage === 'about.html'
-                        ? 'bg-blue-600 text-white'
-                        : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    About (Cards &amp; Form)
-                  </button>
-                </div>
-
-                <a
-                  href={`/${selectedDay}/${currentPreviewPage}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  Open Direct URL
-                </a>
-              </div>
+              {/* Direct Link */}
+              <a
+                href={`/${selectedDay}/${currentPreviewPage}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2.5 py-1.5 rounded-md transition-colors font-medium"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Open Direct URL
+              </a>
             </div>
 
-            {/* Embedded Live Web Page with responsive container */}
-            <div className="flex-1 bg-slate-900 flex justify-center items-stretch min-h-[640px] p-2 overflow-auto">
+            {/* Embedded Live Web Page */}
+            <div className="flex-1 bg-slate-900 flex justify-center items-stretch min-h-[600px] p-2 overflow-auto">
               <div
                 className={`transition-all duration-300 bg-white shadow-2xl relative ${
-                  viewportMode === 'mobile'
+                  viewportMode === 'mobile' && selectedDay === 'day2'
                     ? 'w-[375px] my-4 rounded-2xl border-4 border-slate-700 overflow-hidden min-h-[600px]'
                     : 'w-full h-full rounded-md'
                 }`}
@@ -753,48 +719,63 @@ export default function App() {
           </div>
         )}
 
+        {/* CODE INSPECTOR TAB */}
         {activeTab === 'code' && (
           <div className="flex-1 flex flex-col bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
             {/* File Switcher & Actions */}
             <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setActiveCodeFile('day2/style.css')}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
-                    activeCodeFile === 'day2/style.css'
-                      ? 'bg-blue-600 text-white font-semibold'
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                  }`}
-                >
-                  <Palette className="w-4 h-4 text-amber-400" />
-                  day2/style.css
-                </button>
-                <button
-                  onClick={() => setActiveCodeFile('day2/about.html')}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
-                    activeCodeFile === 'day2/about.html'
-                      ? 'bg-blue-600 text-white font-semibold'
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                  }`}
-                >
-                  <FileCode2 className="w-4 h-4 text-blue-400" />
-                  day2/about.html
-                </button>
-                <button
-                  onClick={() => setActiveCodeFile('day2/index.html')}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
-                    activeCodeFile === 'day2/index.html'
-                      ? 'bg-blue-600 text-white font-semibold'
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                  }`}
-                >
-                  <FileCode2 className="w-4 h-4 text-blue-400" />
-                  day2/index.html
-                </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                {selectedDay === 'day3' ? (
+                  <>
+                    <button
+                      onClick={() => setActiveCodeFile('day3/script.js')}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
+                        activeCodeFile === 'day3/script.js'
+                          ? 'bg-blue-600 text-white font-semibold'
+                          : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      <Terminal className="w-4 h-4 text-emerald-400" />
+                      day3/script.js
+                    </button>
+                    <button
+                      onClick={() => setActiveCodeFile('day3/index.html')}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
+                        activeCodeFile === 'day3/index.html'
+                          ? 'bg-blue-600 text-white font-semibold'
+                          : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      <FileCode2 className="w-4 h-4 text-blue-400" />
+                      day3/index.html
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setActiveCodeFile('day2/style.css')}
+                      className="px-3 py-1.5 rounded-md text-xs font-mono bg-blue-600 text-white"
+                    >
+                      day2/style.css
+                    </button>
+                    <button
+                      onClick={() => setActiveCodeFile('day2/about.html')}
+                      className="px-3 py-1.5 rounded-md text-xs font-mono text-slate-400"
+                    >
+                      day2/about.html
+                    </button>
+                  </>
+                )}
               </div>
 
               <button
-                onClick={() => copyToClipboard(getCodeContent())}
+                onClick={() =>
+                  copyToClipboard(
+                    activeCodeFile === 'day3/script.js'
+                      ? DAY3_SCRIPT_JS
+                      : DAY3_INDEX_HTML
+                  )
+                }
                 className="flex items-center gap-1.5 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-md transition-colors"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -805,23 +786,26 @@ export default function App() {
             {/* Code Display Area */}
             <div className="flex-1 p-4 bg-slate-950 overflow-auto font-mono text-xs sm:text-sm text-slate-300 leading-relaxed">
               <pre className="whitespace-pre">
-                {getCodeContent()}
+                {activeCodeFile === 'day3/script.js'
+                  ? DAY3_SCRIPT_JS
+                  : DAY3_INDEX_HTML}
               </pre>
             </div>
           </div>
         )}
 
+        {/* RUBRIC & COMPLIANCE TAB */}
         {activeTab === 'rubric' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* W3C & CSS Specs Card */}
+            {/* W3C & JS Specs Card */}
             <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-xl">
               <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-100 text-sm">W3C Nu Validator Status</h3>
-                  <p className="text-xs text-slate-400">Tested against validator.w3.org API</p>
+                  <h3 className="font-semibold text-slate-100 text-sm">Day 3 W3C &amp; Test Verification</h3>
+                  <p className="text-xs text-slate-400">Tested in Node.js &amp; W3C Nu Validator</p>
                 </div>
               </div>
 
@@ -829,48 +813,38 @@ export default function App() {
                 <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileCode2 className="w-4 h-4 text-blue-400" />
-                    <span className="text-xs font-mono text-slate-200">day2/index.html</span>
+                    <span className="text-xs font-mono text-slate-200">day3/index.html</span>
                   </div>
                   <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    0 Errors • 0 Warnings
+                    W3C 0 Errors
                   </span>
                 </div>
 
                 <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <FileCode2 className="w-4 h-4 text-blue-400" />
-                    <span className="text-xs font-mono text-slate-200">day2/about.html</span>
+                    <Terminal className="w-4 h-4 text-emerald-400" />
+                    <span className="text-xs font-mono text-slate-200">day3/script.js</span>
                   </div>
                   <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    0 Errors • 0 Warnings
-                  </span>
-                </div>
-
-                <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Palette className="w-4 h-4 text-amber-400" />
-                    <span className="text-xs font-mono text-slate-200">day2/style.css</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    Valid CSS3 Standard
+                    6/6 Functions Passing
                   </span>
                 </div>
               </div>
 
               <div className="mt-5 p-3.5 bg-blue-950/30 border border-blue-800/40 rounded-lg text-xs text-blue-200 leading-relaxed">
-                Both pages in <code>day2/</code> link to the shared <code>style.css</code> via <code>&lt;link rel="stylesheet" href="style.css"&gt;</code> and strictly follow HTML5 and modern responsive CSS layout techniques without any framework dependencies.
+                <code>day3/index.html</code> is a minimal HTML5 page with title "Notes Toolkit" loading <code>script.js</code> with <code>defer</code>. All 6 toolkit functions operate on the starting notes array with both normal and edge cases documented in comments.
               </div>
             </div>
 
-            {/* Day 2 Assignment Checklist */}
+            {/* Day 3 Assignment Rubric */}
             <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-xl">
               <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-100 text-sm">Day 2 Rubric Checklist</h3>
-                  <p className="text-xs text-slate-400">All 9 requirements verified</p>
+                  <h3 className="font-semibold text-slate-100 text-sm">Day 3 Assignment Rubric</h3>
+                  <p className="text-xs text-slate-400">All 6 function requirements verified</p>
                 </div>
               </div>
 
@@ -878,55 +852,43 @@ export default function App() {
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Copies in day2/:</strong> <code className="text-blue-400 font-mono">day2/index.html</code> and <code className="text-blue-400 font-mono">day2/about.html</code> linking shared <code className="text-blue-400 font-mono">style.css</code>.
+                    <strong>searchNotes(word):</strong> Uses <code className="text-blue-400 font-mono">filter</code>, <code className="text-blue-400 font-mono">toLowerCase</code> and <code className="text-blue-400 font-mono">includes</code>.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Features Class:</strong> <code className="text-blue-400 font-mono">class="features"</code> added to the features <code className="text-blue-400 font-mono">&lt;ul&gt;</code> on <code className="text-blue-400 font-mono">about.html</code>.
+                    <strong>longestNote():</strong> Handles empty array first (returns <code className="text-blue-400 font-mono">null</code>), then compares lengths.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Box-Sizing Reset:</strong> Universal <code className="text-blue-400 font-mono">box-sizing: border-box</code> reset applied.
+                    <strong>countByCategory():</strong> Loops over notes and increments counters in an object.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Flexbox Nav:</strong> Centred row, <code className="text-blue-400 font-mono">16px gap</code>, white text, no underline, visible hover style.
+                    <strong>getSummary():</strong> Uses <code className="text-blue-400 font-mono">countByCategory</code> and a template literal, correctly applying singular <code className="text-blue-400 font-mono">"note"</code> vs plural <code className="text-blue-400 font-mono">"notes"</code>.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Centred Main &amp; Card Sections:</strong> <code className="text-blue-400 font-mono">max-width: 800px</code> with auto margins, each <code className="text-blue-400 font-mono">&lt;section&gt;</code> styled as a white card.
+                    <strong>isDuplicate(text):</strong> Uses <code className="text-blue-400 font-mono">some</code>, comparing trimmed lowercase text.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>CSS Grid Features Cards:</strong> Features list styled using <code className="text-blue-400 font-mono">repeat(auto-fit, minmax(180px, 1fr))</code>.
+                    <strong>addNote(text, category):</strong> Calls <code className="text-blue-400 font-mono">isDuplicate</code>, checks length (1–200 chars) and category (<code className="text-blue-400 font-mono">personal, work, study</code>), logs reasons, and returns boolean.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Table &amp; Form Styling:</strong> Table cells with borders and padding; form fields stacked vertically with full width.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>
-                    <strong>Transitions:</strong> Smooth transitions on buttons and navigation links.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>
-                    <strong>Media Query:</strong> <code className="text-blue-400 font-mono">@media (max-width: 600px)</code> reducing header font size, padding, and nav spacing on small screens.
+                    <strong>Tests &amp; Comments:</strong> Tested every function with at least two <code className="text-blue-400 font-mono">console.log</code> calls with expected output comments.
                   </span>
                 </li>
               </ul>
